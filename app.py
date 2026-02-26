@@ -32,8 +32,8 @@ with tab2:
     lat = st.number_input("Latitude", value=48.0)
     lon = st.number_input("Longitude", value=67.0)
 
-    year1 = st.number_input("First Year", value=2023)
-    year2 = st.number_input("Second Year", value=2024)
+    year1 = st.number_input("First Year", value=2020)
+    year2 = st.number_input("Second Year", value=2026)
 
     if st.button("Analyze Forest"):
 
@@ -71,10 +71,11 @@ with tab3:
     lon_map = st.number_input("Map Longitude", value=67.0, key="map_lon")
 
     m = folium.Map(
-        location=[lat_map, lon_map],
-        zoom_start=10,
-        tiles="OpenStreetMap"
-    )
+    location=[lat_map, lon_map],
+    zoom_start=12,
+    tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    attr="Esri"
+)
 
     folium.Marker(
         [lat_map, lon_map],
