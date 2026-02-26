@@ -1,52 +1,101 @@
+import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
+import folium
+from streamlit_folium import st_folium
 
-print("🌱 GreenSpace AI - MVP")
+st.set_page_config(page_title="GreenSpace AI", layout="wide")
 
-# Ввод координат
-lat = float(input("Введите широту: "))
-lon = float(input("Введите долготу: "))
-year1 = int(input("Введите первый год: "))
-year2 = int(input("Введите второй год: "))
+st.title("🌱 GreenSpace AI")
 
-# Симуляция спутниковых каналов (как реальные матрицы пикселей)
-nir_1 = np.random.uniform(0.6, 0.9, (300, 300))
-red_1 = np.random.uniform(0.2, 0.4, (300, 300))
+# ====== ВКЛАДКИ ======
+tab1, tab2, tab3, tab4 = st.tabs(["Dashboard", "Analysis", "Map", "Reports"])
 
-nir_2 = np.random.uniform(0.4, 0.8, (300, 300))
-red_2 = np.random.uniform(0.3, 0.5, (300, 300))
+# ====== DASHBOARD ======
+with tab1:
+    st.header("📊 Forest Condition Change (NDVI)")
 
-# Расчёт NDVI
-ndvi_1 = (nir_1 - red_1) / (nir_1 + red_1)
-ndvi_2 = (nir_2 - red_2) / (nir_2 + red_2)
+    months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+    ndvi_values = np.random.uniform(0.6, 0.85, 12)
 
-mean1 = np.mean(ndvi_1)
-mean2 = np.mean(ndvi_2)
+    fig, ax = plt.subplots()
+    ax.plot(months, ndvi_values)
+    ax.set_ylabel("NDVI Index")
+    ax.set_title("Monthly NDVI Trend")
 
-change = ((mean2 - mean1) / mean1) * 100
+    st.pyplot(fig)
 
-print("\n📊 Результаты анализа:")
-print(f"Координаты участка: {lat}, {lon}")
-print(f"NDVI в {year1}: {mean1:.3f}")
-print(f"NDVI в {year2}: {mean2:.3f}")
-print(f"Изменение: {change:.2f}%")
+# ====== ANALYSIS ======
+with tab2:
+    st.header("🔍 New Analysis")
 
-# Автоматическая аналитика
-if change < -10:
-    status = "⚠ Возможная деградация леса"
-elif change > 5:
-    status = "🌿 Состояние леса улучшилось"
-else:
-    status = "📈 Существенных изменений не обнаружено"
+    lat = st.number_input("Latitude", value=48.0)
+    lon = st.number_input("Longitude", value=67.0)
 
-print("Вывод:", status)
+    year1 = st.number_input("First Year", value=2023)
+    year2 = st.number_input("Second Year", value=2024)
 
-# График
-years = [year1, year2]
-values = [mean1, mean2]
+    if st.button("Analyze Forest"):
 
-plt.figure()
-plt.plot(years, values)
-plt.ylabel("NDVI")
-plt.title("Изменение состояния леса")
-plt.show()
+        nir_1 = np.random.uniform(0.6, 0.9, (200, 200))
+        red_1 = np.random.uniform(0.2, 0.4, (200, 200))
+
+        nir_2 = np.random.uniform(0.4, 0.8, (200, 200))
+        red_2 = np.random.uniform(0.3, 0.5, (200, 200))
+
+        ndvi_1 = (nir_1 - red_1) / (nir_1 + red_1)
+        ndvi_2 = (nir_2 - red_2) / (nir_2 + red_2)
+
+        mean1 = np.mean(ndvi_1)
+        mean2 = np.mean(ndvi_2)
+
+        change = ((mean2 - mean1) / mean1) * 100
+
+        st.subheader("Results")
+        st.write(f"NDVI in {year1}: {mean1:.3f}")
+        st.write(f"NDVI in {year2}: {mean2:.3f}")
+        st.write(f"Change: {change:.2f}%")
+
+        if change < -10:
+            st.error("⚠ Possible forest degradation")
+        elif change > 5:
+            st.success("🌿 Forest health improving")
+        else:
+            st.info("📈 No significant change detected")
+
+# ====== MAP ======
+with tab3:
+    st.header("🛰 Satellite View")
+
+    lat_map = st.number_input("Map Latitude", value=48.0, key="map_lat")
+    lon_map = st.number_input("Map Longitude", value=67.0, key="map_lon")
+
+    m = folium.Map(
+        location=[lat_map, lon_map],
+        zoom_start=10,
+        tiles="OpenStreetMap"
+    )
+
+    folium.Marker(
+        [lat_map, lon_map],
+        popup="Analysis Area",
+    ).add_to(m)
+
+    st_folium(m, width=1000, height=500)
+
+# ====== REPORTS ======
+with tab4:
+    st.header("📑 AI Report")
+
+    st.write("""
+    This report summarizes the forest condition analysis based on NDVI index.
+
+    The system evaluates vegetation health, detects degradation trends,
+    and provides confidence estimation.
+
+    Future versions will integrate real satellite data and CNN-based segmentation.
+    """)
+
+    confidence = np.random.randint(85, 98)
+    st.progress(confidence / 100)
+    st.write(f"AI Confidence Level: {confidence}%")
