@@ -100,7 +100,7 @@ with tab4:
     confidence = np.random.randint(85, 98)
     st.progress(confidence / 100)
     st.write(f"AI Confidence Level: {confidence}%")
-    with tab5:
+    with tab4:
     st.header("🧠 CNN Forest Segmentation Demo")
 
     st.write("""
