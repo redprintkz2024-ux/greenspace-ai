@@ -100,3 +100,44 @@ with tab4:
     confidence = np.random.randint(85, 98)
     st.progress(confidence / 100)
     st.write(f"AI Confidence Level: {confidence}%")
+    with tab5:
+    st.header("🧠 CNN Forest Segmentation Demo")
+
+    st.write("""
+    This module simulates a Convolutional Neural Network (CNN)
+    performing forest segmentation on satellite imagery.
+    """)
+
+    # === Симуляция спутникового NDVI изображения ===
+    ndvi_image = np.random.uniform(0.2, 0.9, (200, 200))
+
+    # === "Сегментация" леса (как будто CNN выделяет лес) ===
+    forest_mask = ndvi_image > 0.6  # лес если NDVI > 0.6
+
+    forest_area_percent = np.sum(forest_mask) / forest_mask.size * 100
+
+    st.subheader("NDVI Map")
+    fig1, ax1 = plt.subplots()
+    ax1.imshow(ndvi_image)
+    ax1.set_title("Simulated NDVI")
+    ax1.axis("off")
+    st.pyplot(fig1)
+
+    st.subheader("Forest Segmentation (CNN Output)")
+    fig2, ax2 = plt.subplots()
+    ax2.imshow(forest_mask)
+    ax2.set_title("Forest Mask")
+    ax2.axis("off")
+    st.pyplot(fig2)
+
+    st.subheader("Model Output")
+    st.write(f"Estimated Forest Area: {forest_area_percent:.2f}%")
+
+    if forest_area_percent < 40:
+        st.error("⚠ Low forest coverage detected")
+    elif forest_area_percent > 70:
+        st.success("🌿 Dense healthy forest detected")
+    else:
+        st.info("🌳 Moderate forest coverage")
+
+    st.progress(int(forest_area_percent) / 100)
